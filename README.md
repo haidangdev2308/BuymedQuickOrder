@@ -1,97 +1,124 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Buymed Quick Order App
 
-# Getting Started
+A simplified mobile application designed for pharmacy staff to search for products and create quick orders efficiently.
+This project was developed as a technical assessment for the **Middle Mobile Software Engineer** position at Buymed.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 📱 Features Implemented
 
-## Step 1: Start Metro
+### Core Requirements
+- **Product List:** Displays products with name, price, and category. Includes an **"Rx" badge** for prescription items.
+- **Search & Filter:**
+  - Search by product name (Case-insensitive).
+  - Filter by Category (Tabs).
+- **Cart Management:**
+  - Add/Remove items with quantity validation (Min: 0, Max: 99).
+  - Real-time calculation of **Total SKUs**, **Total Quantity**, and **Total Amount**.
+- **UX/UI:**
+  - Handles Empty States when no results are found.
+  - Safe Area handling for Android (Translucent Status Bar) and iOS (Notch).
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### 🌟 Bonus Features
+- **Performance Optimization:** Implemented **Debounce (300ms)** for the search input to prevent excessive re-renders.
+- **Data Persistence:** The cart state is saved to `AsyncStorage` and automatically restored when the app reloads.
+- **Unit Testing:** Included Jest unit tests for the core cart calculation logic.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+---
 
-```sh
-# Using npm
-npm start
+## 🚀 How to Run the App
 
-# OR using Yarn
-yarn start
-```
+### Prerequisites
+- Node.js > 18
+- React Native CLI environment setup (Android Studio / Xcode)
 
-## Step 2: Build and run your app
+### Installation Steps
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+1. **Clone the repository:**
+   ```bash
+   git clone <YOUR_REPO_URL>
+   cd BuymedQuickOrder
 
-### Android
+Install dependencies:
 
-```sh
-# Using npm
+Bash
+npm install
+# or
+yarn install
+Install Pods (iOS only):
+
+Bash
+cd ios && pod install && cd ..
+Run the application:
+
+For Android:
+
+Bash
 npm run android
+# or
+npx react-native run-android
+For iOS:
 
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+Bash
 npm run ios
+# or
+npx react-native run-ios
+Run Unit Tests:
 
-# OR using Yarn
-yarn ios
-```
+Bash
+npm test
+🏗 Architecture & Logic Organization
+I strictly followed the Separation of Concerns (SoC) principle to ensure the codebase is clean, testable, and maintainable. The project is structured as follows:
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+src/
+├── components/      # Presentational Components (UI only)
+├── hooks/           # Business Logic & State Management
+├── screens/         # Screen Containers
+├── types/           # TypeScript Definitions
+├── utils/           # Pure Functions & Helpers
+└── constants/       # Mock Data & Config
+1. Business Logic Layer (src/hooks/useQuickOrder.ts)
+Instead of cluttering the UI component with logic, I extracted all business logic into a Custom Hook called useQuickOrder.
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Responsibilities:
 
-## Step 3: Modify your app
+Manages all local state (cart, searchText, selectedCategory).
 
-Now that you have successfully run the app, let's make changes!
+Handles side effects (Persistence with AsyncStorage, Debounce timer).
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+Optimization: The cart is stored as a Map (Object) { [id]: quantity } instead of an Array. This allows O(1) complexity when looking up product quantities, significantly improving performance compared to Array.find (O(n)).
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+2. Presentation Layer (src/components/ProductItem.tsx)
+These are "Dumb" Components. They only receive props and render the UI.
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+Wrapped in React.memo to prevent unnecessary re-renders. For example, updating the quantity of "Product A" will not trigger a re-render for "Product B".
 
-## Congratulations! :tada:
+3. Pure Logic Layer (src/utils/calculations.ts)
+The logic for calculating totals (Price, Qty, SKUs) is extracted into pure functions.
 
-You've successfully run and modified your React Native App. :partying_face:
+Why? Pure functions are deterministic and easier to Unit Test without mocking React hooks or components.
 
-### Now what?
+⚖️ Trade-offs & Future Improvements
+Due to the time constraints of this assessment, I made some architectural trade-offs. If I had more time, I would improve the app in the following areas:
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+1. State Management
+Current: Local State + Context (implicit).
 
-# Troubleshooting
+Improvement: For a production-scale app with multiple screens (e.g., Checkout, Profile), I would migrate to Redux Toolkit or Zustand. This prevents "prop drilling" and makes global state management more predictable.
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+2. List Performance
+Current: FlatList.
 
-# Learn More
+Improvement: While FlatList is sufficient for a small dataset, handling thousands of pharmaceutical products requires better performance. I would switch to FlashList (by Shopify) to leverage its recycling architecture (similar to RecyclerView in Android).
 
-To learn more about React Native, take a look at the following resources:
+3. Data Handling
+Current: Mock data (src/constants/mockData.ts) and Client-side filtering.
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Improvement: Integrate with a real Backend API.
+
+Implement Server-side pagination and search to reduce initial load time.
+
+Use React Query (TanStack Query) for caching, background refetching, and handling loading/error states robustly.
+
+4. Testing Strategy
+Current: Unit Tests for logic.
+
+Improvement: Add E2E Testing (using Detox or Maestro) to automate critical user flows (e.g., "User searches for Panadol -> Adds to cart -> Sees total price update").
