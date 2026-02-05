@@ -8,7 +8,7 @@ const CART_STORAGE_KEY = '@buymed_cart_v1';
 
 export const useQuickOrder = () => {
   const [searchText, setSearchText] = useState(''); // Text trong ô input
-  const [query, setQuery] = useState(''); // Text thực tế dùng để search (sau khi debounce)
+  const [query, setQuery] = useState(''); // Text thực tế dùng để search
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [cart, setCart] = useState<CartMap>({}); // Lưu dạng { id: quantity }
 
@@ -44,7 +44,7 @@ export const useQuickOrder = () => {
     () =>
       debounce((text: string) => {
         setQuery(text);
-      }, 300), // Chỉ setQuery sau khi người dùng ngừng gõ 300ms
+      }, 300), // Chỉ setQuery sau khi ngừng gõ 300ms
     [],
   );
 
@@ -56,9 +56,9 @@ export const useQuickOrder = () => {
   //Lọc sản phẩm
   const filteredProducts = useMemo(() => {
     return PRODUCTS_DATA.filter(item => {
-      // Logic search không phân biệt hoa thường
+      //search không phân biệt hoa thường
       const matchName = item.name.toLowerCase().includes(query.toLowerCase());
-      // Logic filter category
+      //filter category
       const matchCategory =
         selectedCategory === 'All' || item.category === selectedCategory;
 
@@ -72,7 +72,6 @@ export const useQuickOrder = () => {
       const currentQty = prevCart[productId] || 0;
       const newQty = currentQty + delta;
 
-      // Validate: Không được nhỏ hơn 0, không lớn hơn 99
       if (newQty < 0) return prevCart;
       if (newQty > 99) return prevCart;
 
@@ -86,7 +85,7 @@ export const useQuickOrder = () => {
     });
   }, []);
 
-  //Tính Tổng (Totals)
+  //Tính tổng
   const totals = useMemo(() => {
     let totalQty = 0;
     let totalAmount = 0;
@@ -100,7 +99,7 @@ export const useQuickOrder = () => {
       if (product && qty > 0) {
         totalQty += qty;
         totalAmount += qty * product.price;
-        totalSKUs += 1; // Đếm số dòng sản phẩm (SKU)
+        totalSKUs += 1; // Đếm số dòng sản phẩm SKU
       }
     });
 

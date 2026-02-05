@@ -38,7 +38,7 @@ export const PRODUCTS_DATA: Product[] = [
   },
 ];
 
-// Danh sách Category để làm bộ lọc
+// Danh sách Category
 export const CATEGORIES = [
   'All',
   'Pain Relief',
