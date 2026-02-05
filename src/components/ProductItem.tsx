@@ -16,7 +16,7 @@ export const ProductItem = memo(({ item, quantity, onUpdate }: Props) => {
       <View style={styles.info}>
         <View style={styles.header}>
           <Text style={styles.name}>{item.name}</Text>
-          {/*Hiển thị Rx Badge nếu là thuốc kê đơn */}
+          {/*Hiển thị Rx nếu là thuốc kê đơn */}
           {item.isPrescription && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>Rx</Text>

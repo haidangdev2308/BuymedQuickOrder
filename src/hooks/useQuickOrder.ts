@@ -4,6 +4,8 @@ import debounce from 'lodash.debounce';
 import { PRODUCTS_DATA } from '../constants/mockData';
 import { CartMap } from '../types';
 
+import { calculateTotals } from '../utils/calculations';
+
 const CART_STORAGE_KEY = '@buymed_cart_v1';
 
 export const useQuickOrder = () => {
@@ -66,7 +68,7 @@ export const useQuickOrder = () => {
     });
   }, [query, selectedCategory]);
 
-  //Thay đổi số lượng (+/-)
+  //Thay đổi số lượng
   const updateQuantity = useCallback((productId: number, delta: number) => {
     setCart(prevCart => {
       const currentQty = prevCart[productId] || 0;
@@ -87,23 +89,7 @@ export const useQuickOrder = () => {
 
   //Tính tổng
   const totals = useMemo(() => {
-    let totalQty = 0;
-    let totalAmount = 0;
-    let totalSKUs = 0;
-
-    Object.keys(cart).forEach(key => {
-      const id = Number(key);
-      const qty = cart[id];
-      const product = PRODUCTS_DATA.find(p => p.id === id);
-
-      if (product && qty > 0) {
-        totalQty += qty;
-        totalAmount += qty * product.price;
-        totalSKUs += 1; // Đếm số dòng sản phẩm SKU
-      }
-    });
-
-    return { totalQty, totalAmount, totalSKUs };
+    return calculateTotals(cart, PRODUCTS_DATA);//unit testable function
   }, [cart]);
 
   return {
