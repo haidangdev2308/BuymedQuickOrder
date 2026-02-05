@@ -1,3 +1,5 @@
+
+```markdown
 # Buymed Quick Order App
 
 A simplified mobile application designed for pharmacy staff to search for products and create quick orders efficiently.
@@ -37,37 +39,60 @@ This project was developed as a technical assessment for the **Middle Mobile Sof
    git clone <YOUR_REPO_URL>
    cd BuymedQuickOrder
 
-Install dependencies:
+```
 
-Bash
+2. **Install dependencies:**
+```bash
 npm install
 # or
 yarn install
-Install Pods (iOS only):
 
-Bash
+```
+
+
+3. **Install Pods (iOS only):**
+```bash
 cd ios && pod install && cd ..
-Run the application:
 
-For Android:
+```
 
-Bash
+
+4. **Run the application:**
+* **For Android:**
+```bash
 npm run android
 # or
 npx react-native run-android
-For iOS:
 
-Bash
+```
+
+
+* **For iOS:**
+```bash
 npm run ios
 # or
 npx react-native run-ios
-Run Unit Tests:
 
-Bash
+```
+
+
+
+
+5. **Run Unit Tests:**
+```bash
 npm test
-🏗 Architecture & Logic Organization
-I strictly followed the Separation of Concerns (SoC) principle to ensure the codebase is clean, testable, and maintainable. The project is structured as follows:
 
+```
+
+
+
+---
+
+## 🏗 Architecture & Logic Organization
+
+I strictly followed the **Separation of Concerns (SoC)** principle to ensure the codebase is clean, testable, and maintainable. The project is structured as follows:
+
+```text
 src/
 ├── components/      # Presentational Components (UI only)
 ├── hooks/           # Business Logic & State Management
@@ -75,50 +100,60 @@ src/
 ├── types/           # TypeScript Definitions
 ├── utils/           # Pure Functions & Helpers
 └── constants/       # Mock Data & Config
-1. Business Logic Layer (src/hooks/useQuickOrder.ts)
-Instead of cluttering the UI component with logic, I extracted all business logic into a Custom Hook called useQuickOrder.
 
-Responsibilities:
+```
 
-Manages all local state (cart, searchText, selectedCategory).
+### 1. Business Logic Layer (`src/hooks/useQuickOrder.ts`)
 
-Handles side effects (Persistence with AsyncStorage, Debounce timer).
+Instead of cluttering the UI component with logic, I extracted all business logic into a Custom Hook called `useQuickOrder`.
 
-Optimization: The cart is stored as a Map (Object) { [id]: quantity } instead of an Array. This allows O(1) complexity when looking up product quantities, significantly improving performance compared to Array.find (O(n)).
+* **Responsibilities:**
+* Manages all local state (`cart`, `searchText`, `selectedCategory`).
+* Handles side effects (Persistence with `AsyncStorage`, Debounce timer).
 
-2. Presentation Layer (src/components/ProductItem.tsx)
-These are "Dumb" Components. They only receive props and render the UI.
 
-Wrapped in React.memo to prevent unnecessary re-renders. For example, updating the quantity of "Product A" will not trigger a re-render for "Product B".
+* **Optimization:** The cart is stored as a `Map` (Object) `{ [id]: quantity }` instead of an Array. This allows **O(1)** complexity when looking up product quantities, significantly improving performance compared to `Array.find` (O(n)).
 
-3. Pure Logic Layer (src/utils/calculations.ts)
-The logic for calculating totals (Price, Qty, SKUs) is extracted into pure functions.
+### 2. Presentation Layer (`src/components/ProductItem.tsx`)
 
-Why? Pure functions are deterministic and easier to Unit Test without mocking React hooks or components.
+* These are **"Dumb" Components**. They only receive props and render the UI.
+* Wrapped in `React.memo` to prevent unnecessary re-renders. For example, updating the quantity of "Product A" will not trigger a re-render for "Product B".
 
-⚖️ Trade-offs & Future Improvements
+### 3. Pure Logic Layer (`src/utils/calculations.ts`)
+
+* The logic for calculating totals (Price, Qty, SKUs) is extracted into pure functions.
+* **Why?** Pure functions are deterministic and easier to Unit Test without mocking React hooks or components.
+
+---
+
+## ⚖️ Trade-offs & Future Improvements
+
 Due to the time constraints of this assessment, I made some architectural trade-offs. If I had more time, I would improve the app in the following areas:
 
-1. State Management
-Current: Local State + Context (implicit).
+### 1. State Management
 
-Improvement: For a production-scale app with multiple screens (e.g., Checkout, Profile), I would migrate to Redux Toolkit or Zustand. This prevents "prop drilling" and makes global state management more predictable.
+* **Current:** Local State + Context (implicit).
+* **Improvement:** For a production-scale app with multiple screens (e.g., Checkout, Profile), I would migrate to **Redux Toolkit** or **Zustand**. This prevents "prop drilling" and makes global state management more predictable.
 
-2. List Performance
-Current: FlatList.
+### 2. List Performance
 
-Improvement: While FlatList is sufficient for a small dataset, handling thousands of pharmaceutical products requires better performance. I would switch to FlashList (by Shopify) to leverage its recycling architecture (similar to RecyclerView in Android).
+* **Current:** `FlatList`.
+* **Improvement:** While `FlatList` is sufficient for a small dataset, handling thousands of pharmaceutical products requires better performance. I would switch to **FlashList** (by Shopify) to leverage its recycling architecture (similar to `RecyclerView` in Android).
 
-3. Data Handling
-Current: Mock data (src/constants/mockData.ts) and Client-side filtering.
+### 3. Data Handling
 
-Improvement: Integrate with a real Backend API.
+* **Current:** Mock data (`src/constants/mockData.ts`) and Client-side filtering.
+* **Improvement:** Integrate with a real Backend API.
+* Implement **Server-side pagination** and search to reduce initial load time.
+* Use **React Query (TanStack Query)** for caching, background refetching, and handling loading/error states robustly.
 
-Implement Server-side pagination and search to reduce initial load time.
 
-Use React Query (TanStack Query) for caching, background refetching, and handling loading/error states robustly.
 
-4. Testing Strategy
-Current: Unit Tests for logic.
+### 4. Testing Strategy
 
-Improvement: Add E2E Testing (using Detox or Maestro) to automate critical user flows (e.g., "User searches for Panadol -> Adds to cart -> Sees total price update").
+* **Current:** Unit Tests for logic.
+* **Improvement:** Add **E2E Testing** (using Detox or Maestro) to automate critical user flows (e.g., "User searches for Panadol -> Adds to cart -> Sees total price update").
+
+```
+
+```
