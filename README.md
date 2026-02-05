@@ -1,5 +1,4 @@
 
-```markdown
 # Buymed Quick Order App
 
 A simplified mobile application designed for pharmacy staff to search for products and create quick orders efficiently.
